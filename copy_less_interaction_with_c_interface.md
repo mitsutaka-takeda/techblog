@@ -10,8 +10,8 @@ Oapque Data Typeを使用したIFでは、ライブラリとクライアント�
 今回はOpaque Data Typeを使用しているC IFと効率的にデータをやり取りする方法を考えます。
 
 ## 説明
-以下のコードでは、OpaqueDataTypeは4バイトという情報のみをクライアントに提供しています。ライブラリの実装では、
-それをintとして扱っています。
+以下のコードでは、`OpaqueDataType`は4バイトという情報のみをクライアントに提供しています。ライブラリの実装では、
+それを`int`として扱っています。
 
 ```c
 /** In header file **/
@@ -56,13 +56,13 @@ int main(){
 }
 ```
 
-C++からこのようなIFを扱うときは、上記のようにOpaqueDataTypeの変数を定義して、IFを呼び出すのが一般的かと思います。
+C++からこのようなIFを扱うときは、上記のように`OpaqueDataType`の変数を定義して、IFを呼び出すのが一般的かと思います。
 
-ライブラリの使用は実装の詳細であるため、OpaqueDataTypeをクライアントのコードの色々なところで使用するのは好ましくありません。
-std::vectorなどのbufferにOpaqueDataType::dataを保持してOpaqueDataTypeの型を消すことを考えます。
+ライブラリの使用は実装の詳細であるため、`OpaqueDataType`をクライアントのコードの色々なところで使用するのは好ましくありません。
+`std::vector`などのbufferに`OpaqueDataType::data`を保持して`OpaqueDataType`の型を消すことを考えます。
 
 
-```c++
+```cpp
 /** Client **/
 #include <cassert>
 #include <vector>
@@ -102,7 +102,7 @@ StandardLayoutTypeであれば、unsigned char[4]と同等に扱えることに�
 `OpaqueDataType`として扱ってみます。
 
 
-```c++
+```cpp
 /** Client **/
 #include <cassert>
 #include <vector>
