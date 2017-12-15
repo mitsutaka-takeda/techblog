@@ -21,17 +21,17 @@ template<
 > class vector;
 ```
 
-Allocatoは型に対してメモリを提供することが役割で、STL(Standard Template Library)をコンピュータのメモリ・モデルから切り離すことを目的として導入されました。[Allocator (C++)@Wikipedia](https://en.wikipedia.org/wiki/Allocator_(C%2B%2B))従来のAllocatorは幾つかの問題点を抱えており、C++11以降、少しづつ改良されてきました。
+Allocatorは型に対してメモリを提供することが役割で、STL(Standard Template Library)をコンピュータのメモリ・モデルから切り離すことを目的として導入されました。[Allocator (C++)@Wikipedia](https://en.wikipedia.org/wiki/Allocator_(C%2B%2B))従来のAllocatorは幾つかの問題点を抱えており、C++11以降、少しづつ改良されてきました。
 
-問題点の1つは、実装の詳細であるはずのAllocatorが型の一部としてあることです。STLではテンプレートのパラメータとしてAllocatorが渡されています。これはAllocatorが型の一部になるということです。STLのコンテナはValue Semanticsを念頭に設計されており、数学のコンセプトを表現していますが、Allocatorという実装の詳細が型に表われると、この対応がくずれてしまいます。例えば、`std::vector`は、列(sequence)を表現しており、数列1, 2, 3は、`std::vector<int>{1, 2, 3}`で表現できます。Allocatorの異なる、`std::vector<int, MyAllocator>{1, 2, 3}`も、std::vector<int, YourAllocator>{1, 2, 3}`も同じ数列1, 2, 3の表現ですが、型が違うため比較することはできません。
+問題点の1つは実装の詳細であるはずのAllocatorが型の一部としてあることです。STLではテンプレートのパラメータとしてAllocatorが渡されています。これはAllocatorが型の一部になるということです。STLのコンテナはValue Semanticsを念頭に設計されており、数学のコンセプトを表現していますが、Allocatorという実装の詳細が型に表われると、この対応がくずれてしまいます。例えば、`std::vector`は、列(sequence)を表現しており、数列1, 2, 3は、`std::vector<int>{1, 2, 3}`で表現できます。Allocatorの異なる、`std::vector<int, MyAllocator>{1, 2, 3}`も、std::vector<int, YourAllocator>{1, 2, 3}`も同じ数列1, 2, 3の表現ですが、型が違うため比較することはできません。
 
-その他にも、Allocatorが型の一部であるためカスタムAllocatorを使用したいクライアントのコードまでテンプレート化する必要があるなどの問題もあります。
+その他にもAllocatorが型の一部であるためカスタムAllocatorを使用したいクライアントのコードまでテンプレート化する必要があるなどの問題もあります。
 
 これらの問題点を解決するために導入されたのが`std::pmr::polymorphic_allocator`と`std::pmr`名前空間したにあるコンテナです。
 
 # std::pmr
 
-まずは、`std::pmr::vector`テンプレートの定義を見てみます。[std::vector](http://en.cppreference.com/w/cpp/container/vector)単純に、`std::vector`のAllocatorに`std::prm::polymporphic_alloctor`を指定したalias templateです。
+まずは`std::pmr::vector`テンプレートの定義を見てみます。[std::vector@cppreference](http://en.cppreference.com/w/cpp/container/vector)単純に、`std::vector`のAllocatorに`std::prm::polymporphic_alloctor`を指定したalias templateです。
 
 ```cpp
 namespace pmr {
@@ -40,7 +40,7 @@ namespace pmr {
 }
 ```
 
-`std::pmr::polymorphic_allocator`は、コンストラクタに`std::pmr::memory_resource`のオブジェクトを受け取ります。`std::pmr::polymorphic_allocator`の振舞い`std::pmr::memory_resource`の振舞いで定義されます。ラムダが`std::function`で型消去されるのと同様に、Allocatorは`std::pmr::polymorphic_allocator`によって型消去されます。異なるAllocatorを型消去で単一の型として扱うことで前述のAllocatorが型に表われる問題を解決します。
+`std::pmr::polymorphic_allocator`はコンストラクタで`std::pmr::memory_resource`オブジェクトへのポインタを受け取ります。`std::pmr::polymorphic_allocator`の振舞い`std::pmr::memory_resource`の振舞いで定義されます。ラムダが`std::function`で型消去されるのと同様に、Allocatorは`std::pmr::polymorphic_allocator`によって型を消去されます。異なるAllocatorを型消去で単一の型として扱うことで前述のAllocatorが型に表われる問題を解決します。
 
 # カスタムAllocator
 
